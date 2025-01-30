@@ -90,9 +90,14 @@ bot_app.add_handler(CommandHandler("random", get_random))
 bot_app.add_handler(CommandHandler("watched", mark_watched))
 
 # Webhook route for Telegram updates
-@app.post(f"/webhook")
+@app.post("/webhook")
 async def webhook(request: Request):
     """Webhook for Telegram"""
     update = Update.de_json(await request.json(), bot_app.bot)
     await bot_app.update_queue.put(update)
     return {"ok": True}
+
+# Start FastAPI server
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
